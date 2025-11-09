@@ -1,2 +1,4 @@
 .env
+sarahah-private.pem
+sarahah-app-aws.pem
 node_modules
