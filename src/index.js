@@ -13,6 +13,10 @@ if (!process.env.PORT) {
   console.error("PORT is not defined in environment variables");
   process.exit(1);
 }
+
+// TRUST PROXY
+app.set('trust proxy', 1); // Trust first proxy (Nginx)
+
 dbConnection();
 // Security Middleware
 app.use(helmet());
