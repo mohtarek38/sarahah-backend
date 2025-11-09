@@ -56,10 +56,10 @@ export const sendMessageService = async (req, res) => {
   try {
     const { content } = req.body;
     const { recieverId } = req.params;
+    const isRecieverExist = await User.findById(recieverId);
     if (!isRecieverExist || !mongoose.isValidObjectId(recieverId)) {
       return res.status(404).json({ message: "Reciever not found" });
     }
-    const isRecieverExist = await User.findById(recieverId);
     const newMessage = await Message.create({
       content,
       recieverId,
