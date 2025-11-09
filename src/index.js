@@ -39,7 +39,7 @@ const whitelist = process.env.CORS_WHITELIST;
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (whitelist.includes(origin)) {
+      if (whitelist.includes(origin) || typeof origin === "undefined") {
         callback(null, true);
       } else {
         console.log(origin);
