@@ -35,14 +35,13 @@ const messageLimiter = createRateLimiter(5, 1); // 3 send meesage requests per m
 app.use("/api/messages/send", messageLimiter);
 
 //CORS Middleware
-const whitelist = process.env.CORS_WHITELIST;
+const whitelist = JSON.parse(process.env.CORS_WHITELIST);
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (whitelist.includes(origin)) {
+      if (whitelist.includes(origin) || (!origin && whitelist.includes("undefined"))) {
         callback(null, true);
       } else {
-        console.log(origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
