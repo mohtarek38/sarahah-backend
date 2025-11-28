@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import dbConnection from "./DB/db.connection.js";
 import { rateLimit } from "express-rate-limit";
+import { authLimiter, sendMessageLimiter, generalLimiter } from "./Utils/utils.barrel.js";
 import { authController, userController, messageController } from "./Modules/controllers.barrel.js";
 import cors from "cors";
 import helmet from "helmet";
@@ -15,28 +16,18 @@ if (!process.env.PORT) {
 }
 
 // TRUST PROXY
-app.set('trust proxy', 1); // Trust first proxy (Nginx)
+app.set("trust proxy", 1); // Trust first proxy (Nginx)
 
 dbConnection();
 // Security Middleware
 app.use(helmet());
 
-// Apply rate limiting to all requests
-const createRateLimiter = (maxRequests, perMinutes = 15) => {
-  return rateLimit({
-    windowMs: perMinutes * 60 * 1000,
-    max: maxRequests,
-    message: `Too many requests, please try again after ${perMinutes} minutes`,
-  });
-};
-const generalLimiter = createRateLimiter(100); // 100 requests per 15 minutes
+// rate limiters
 app.use("/", generalLimiter);
 
-const authLimiter = createRateLimiter(10); // 5 requests per 15 minutes
 app.use("/api/auth", authLimiter);
 
-const messageLimiter = createRateLimiter(5, 1); // 3 send meesage requests per minute
-app.use("/api/messages/send", messageLimiter);
+app.use("/api/messages/send", sendMessageLimiter);
 
 //CORS Middleware
 const whitelist = process.env.CORS_WHITELIST;
